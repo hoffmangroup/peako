@@ -1,0 +1,210 @@
+# Snakefile for peaKO 
+from pkg_resources import resource_filename
+
+peako_script = resource_filename("peako", "data/peako-only.py")
+pool_script = resource_filename("peako", "data/pool-de-novo-motifs-before-centrimo.py")
+add_script = resource_filename("peako", "data/add-pooled-de-novo-motifs-centrimo.py")
+run_memechip_script = resource_filename("peako", "data/run_MEME-ChIP.sh")
+
+py273_env = resource_filename("peako", "data/py273-environment.yml")
+macs2_env = resource_filename("peako", "data/macs2-environment.yml")
+centrimo_env = resource_filename("peako", "data/centrimo-neg-environment.yml")
+
+configfile:
+    "config.json"
+
+sample_wt_prefix = config["sample_wt_prefix"]
+sample_ko_prefix = config["sample_ko_prefix"]
+sample_pipb_prefix = config["sample_pipb_prefix"]
+
+
+rule all:
+    input:
+        "macs2_out/{}-wt_peaks.narrowPeak".format(sample_wt_prefix),
+        "macs2_out/{}-ko_peaks.narrowPeak".format(sample_ko_prefix),
+        "macs2_out/{}-koin_peaks.narrowPeak".format(sample_pipb_prefix),
+        "meme-chip_out/{}-wt_peaks.fa".format(sample_wt_prefix),
+        "meme-chip_out/{}-ko_peaks.fa".format(sample_ko_prefix),
+        "meme-chip_out/{}-koin_peaks.fa".format(sample_pipb_prefix),
+        "meme-chip_out/PipelineA/centrimo_out/centrimo.html",
+        "meme-chip_out/PipelineA/centrimo_out/centrimo.txt",
+        "meme-chip_out/PipelineB/centrimo_out/centrimo.html",
+        "meme-chip_out/PipelineB/centrimo_out/centrimo.txt",
+        "meme-chip_out/WT/centrimo_out/centrimo.html",
+        "meme-chip_out/WT/centrimo_out/centrimo.txt",
+        "meme-chip_out/PipelineA/dreme_out/dreme-pool.xml",
+        "meme-chip_out/PipelineB/dreme_out/dreme-pool.xml",
+        "meme-chip_out/WT/dreme_out/dreme-pool.xml",
+        "commands-pooled-de-novo.sh",
+        "centrimo-neg_out/centrimo-0/centrimo.html",
+        "centrimo-neg_out/centrimo-1/centrimo.html",
+        "peako_out/peaKO-rankings.txt"
+
+
+rule call_peaks:
+    input:
+        wt="data/{}-wt.bam".format(sample_wt_prefix),
+        ko="data/{}-ko.bam".format(sample_ko_prefix)
+    params:
+        genome_size=config["macs2_genome_size"],
+        q_value=config["macs2_q_value"],
+        wt_name="{}-wt".format(sample_wt_prefix),
+        ko_name="{}-ko".format(sample_ko_prefix),
+        pipb_name="{}-koin".format(sample_pipb_prefix)
+    output:
+        "macs2_out/{}-wt_peaks.narrowPeak".format(sample_wt_prefix),
+        "macs2_out/{}-ko_peaks.narrowPeak".format(sample_ko_prefix),
+        "macs2_out/{}-koin_peaks.narrowPeak".format(sample_pipb_prefix)
+    conda:
+        macs2_env
+    shell:
+        """
+        mkdir macs2_out || true
+        macs2 callpeak -t {input.wt} -n {params.wt_name} -g {params.genome_size} -q {params.q_value} --outdir macs2_out
+        macs2 callpeak -t {input.ko} -n {params.ko_name} -g {params.genome_size} -q {params.q_value} --outdir macs2_out
+        macs2 callpeak -t {input.wt} -c {input.ko} -n {params.pipb_name} -g {params.genome_size} -q {params.q_value} --outdir macs2_out
+        """
+
+
+rule process_meme_chip:
+    input:
+        wt="macs2_out/{}-wt_peaks.narrowPeak".format(sample_wt_prefix),
+	ko="macs2_out/{}-ko_peaks.narrowPeak".format(sample_ko_prefix),
+	pipb="macs2_out/{}-koin_peaks.narrowPeak".format(sample_pipb_prefix)
+    output:
+        "meme-chip_out/{}-wt_peaks.fa".format(sample_wt_prefix),
+        "meme-chip_out/{}-ko_peaks.fa".format(sample_ko_prefix),
+        "meme-chip_out/{}-koin_peaks.fa".format(sample_pipb_prefix)
+    params:
+        chr_sizes=config["chr_sizes"],
+        trf_masked_genome=config["trf_masked_genome"],
+	script_path=config["script_path"]
+    shell:
+        "bash {run_memechip_script} -i macs2_out -o meme-chip_out -M run_meme-chip-neg -s {params.chr_sizes} -g {params.trf_masked_genome} -t {input.wt} -c {input.ko} -k {input.pipb}"
+
+
+rule run_meme_chip_pipeline_a:
+    input:
+        wt="meme-chip_out/{}-wt_peaks.fa".format(sample_wt_prefix),
+        ko="meme-chip_out/{}-ko_peaks.fa".format(sample_ko_prefix)
+    params:
+        outdir="meme-chip_out/PipelineA",
+        motif_database=config["motif_database"],
+        min_meme_motif_width=config["min_meme_motif_width"],
+        max_meme_motif_width=config["max_meme_motif_width"]
+    output:
+        "meme-chip_out/PipelineA/centrimo_out/centrimo.html",
+        "meme-chip_out/PipelineA/centrimo_out/centrimo.txt",
+        "meme-chip_out/PipelineA/dreme_out/dreme.xml"
+    conda:
+        py273_env
+    shell:
+        "meme-chip -dna -neg {input.ko} -meme-minw {params.min_meme_motif_width} -meme-maxw {params.max_meme_motif_width} -oc {params.outdir} -db {params.motif_database} {input.wt}"
+
+
+rule run_meme_chip_pipeline_b:
+    input:
+        pipb="meme-chip_out/{}-koin_peaks.fa".format(sample_pipb_prefix)
+    params:
+        outdir="meme-chip_out/PipelineB",
+        motif_database=config["motif_database"],
+        min_meme_motif_width=config["min_meme_motif_width"],
+        max_meme_motif_width=config["max_meme_motif_width"]
+    output:
+        "meme-chip_out/PipelineB/centrimo_out/centrimo.html",
+        "meme-chip_out/PipelineB/centrimo_out/centrimo.txt",
+        "meme-chip_out/PipelineB/dreme_out/dreme.xml"
+    conda:
+        py273_env
+    shell:
+        "meme-chip -dna -meme-minw {params.min_meme_motif_width} -meme-maxw {params.max_meme_motif_width} -oc {params.outdir} -db {params.motif_database} {input.pipb}"
+
+
+rule run_meme_chip_wt:
+    input:
+        wt="meme-chip_out/{}-wt_peaks.fa".format(sample_wt_prefix)
+    params:
+        outdir="meme-chip_out/WT",
+        motif_database=config["motif_database"],
+        min_meme_motif_width=config["min_meme_motif_width"],
+        max_meme_motif_width=config["max_meme_motif_width"]
+    output:
+        "meme-chip_out/WT/centrimo_out/centrimo.html",
+        "meme-chip_out/WT/centrimo_out/centrimo.txt",
+        "meme-chip_out/WT/dreme_out/dreme.xml"
+    conda:
+        py273_env
+    shell:
+        "meme-chip -dna -meme-minw {params.min_meme_motif_width} -meme-maxw {params.max_meme_motif_width} -oc {params.outdir} -db {params.motif_database} {input.wt}"
+
+
+# add centrimo rule to pool or remove de novo motifs
+
+
+rule pool_de_novo_motifs:
+    input:
+        pipa="meme-chip_out/PipelineA/dreme_out/dreme.xml",
+        pipb="meme-chip_out/PipelineB/dreme_out/dreme.xml",
+        wt="meme-chip_out/WT/dreme_out/dreme.xml"
+    params:
+        pipa_dir="meme-chip_out/PipelineA/",
+        pipb_dir="meme-chip_out/PipelineB/",
+        wt_dir="meme-chip_out/WT/",
+	script_path=config["script_path"]
+    output:
+        pipa="meme-chip_out/PipelineA/dreme_out/dreme-pool.xml",
+        pipb="meme-chip_out/PipelineB/dreme_out/dreme-pool.xml",
+        wt="meme-chip_out/WT/dreme_out/dreme-pool.xml"
+    shell:
+        "python {pool_script} -d {params.pipa_dir} -k {params.pipb_dir} -w {params.wt_dir}"
+
+
+rule add_de_novo_motifs:
+    input:
+        pipa="meme-chip_out/PipelineA/centrimo_out/centrimo.html",
+        pipb="meme-chip_out/PipelineB/centrimo_out/centrimo.html",
+        wt="meme-chip_out/WT/centrimo_out/centrimo.html"
+    output:
+        "commands-pooled-de-novo.sh"
+    params:
+        script_path=config["script_path"]
+    shell:
+        """
+        mkdir centrimo-neg_out || true
+        python {add_script} -l {input.pipa} {input.pipb} {input.wt} -o centrimo-neg_out
+        """
+
+rule run_centrimo_neg:
+    input:
+        "commands-pooled-de-novo.sh"
+    output:
+        "centrimo-neg_out/centrimo-0/centrimo.html",
+        "centrimo-neg_out/centrimo-0/centrimo.txt",
+        "centrimo-neg_out/centrimo-1/centrimo.html",
+        "centrimo-neg_out/centrimo-1/centrimo.txt"
+    conda:
+        centrimo_env
+    shell:
+        "bash commands-pooled-de-novo.sh"
+
+rule run_peako:
+    input:
+        pipa_centrimo_html="centrimo-neg_out/centrimo-0/centrimo.html",
+        pipa_centrimo_txt="centrimo-neg_out/centrimo-0/centrimo.txt",
+        pipb_centrimo_html="centrimo-neg_out/centrimo-1/centrimo.html",
+        pipb_centrimo_txt="centrimo-neg_out/centrimo-1/centrimo.txt"
+    output:
+        "peako_out/peaKO-rankings.txt"
+    params:
+        peako_params=config["peako_params"],
+	script_path=config["script_path"]
+    shell:
+        """
+        mkdir peako_out || true
+        if [ -n "{params.peako_params}" ]
+        then
+        python {peako_script} {params.peako_params} . {input.pipa_centrimo_html} {input.pipa_centrimo_txt} . {input.pipb_centrimo_html} {input.pipb_centrimo_txt} peako_out
+        else
+        python {peako_script} . {input.pipa_centrimo_html} {input.pipa_centrimo_txt} . {input.pipb_centrimo_html} {input.pipb_centrimo_txt} peako_out
+        fi
+        """

@@ -1,0 +1,24 @@
+name: centrimo-neg-env
+channels:
+- defaults
+dependencies:
+- _libgcc_mutex=0.1=main
+- ca-certificates=2019.5.15=1
+- certifi=2019.6.16=py27_1
+- libedit=3.1.20181209=hc058e9b_0
+- libffi=3.2.1=hd88cf55_4
+- libgcc-ng=9.1.0=hdf63c60_0
+- libstdcxx-ng=9.1.0=hdf63c60_0
+- ncurses=6.1=he6710b0_1
+- openssl=1.0.1k=1
+- pip=19.1.1=py27_0
+- python=2.7.3=7
+- readline=6.2=2
+- setuptools=41.0.1=py27_0
+- sqlite=3.29.0=h7b6447c_0
+- system=5.8=2
+- tk=8.5.18=0
+- wheel=0.33.4=py27_0
+- zlib=1.2.11=h7b6447c_3
+prefix: /mnt/work1/users/home2/ddenisko/miniconda3/envs/centrimo-neg-env
+
