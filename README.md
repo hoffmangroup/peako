@@ -84,7 +84,7 @@ PeaKO's main output file is `<outdir>/peako_out/peaKO-rankings.txt`, which conta
 
 ## Additional resources
 
-Source code is available at: https://bitbucket.org/hoffmanlab/peako.
+Source code is available at: https://github.com/hoffmangroup/peako.
 
 We have deposited the [current version of the code](https://doi.org/10.5281/zenodo.3338330), [example HTML and TXT CentriMo outputs](https://doi.org/10.5281/zenodo.3338324), and a [modified CentriMo binary](https://doi.org/10.5281/zenodo.3356995) on Zenodo.
 
