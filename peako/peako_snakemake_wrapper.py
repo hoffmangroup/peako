@@ -8,7 +8,7 @@ import subprocess
 import json
 
 from pkg_resources import resource_filename
-#from .version import __version__
+from .version import __version__
 
 snakefile = resource_filename(__name__, "data/snakefile")
 
@@ -99,8 +99,8 @@ Available from: https://doi.org/<ID>
                         help='motif database (MEME)')
 
     # general
-#    parser.add_argument('-V', '--version', action='version',
-#                        version=__version__)
+    parser.add_argument('-V', '--version', action='version',
+                        version=__version__)
 
     # peaKO submodule
     parser.add_argument('-j', dest='jaspar_id',
