@@ -93,4 +93,4 @@ We have deposited the [current version of the code](https://doi.org/10.5281/zeno
 
 If you found peaKO useful, please cite:
 
-Denisko D, Viner C, Hoffman MM. Motif elucidation in ChIP-seq datasets with a knockout control. BioRxiv <ID> [Preprint]. 2019. Available from: https://doi.org/<ID>
+Denisko D, Viner C, Hoffman MM. Motif elucidation in ChIP-seq datasets with a knockout control. BioRxiv 10.1101/721720 [Preprint]. 2019. Available from: https://doi.org/10.1101/721720
