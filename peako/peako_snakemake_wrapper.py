@@ -22,7 +22,7 @@ def get_basename_without_exts(file_path):
 
 def get_sample_name(sample):
     if sample.endswith(('.bam.gz', '.bam')):
-        if sample.endswith('.bam'):
+        if sample.endswith('.bam'):  # XXX remove?
             sample_name = get_basename_without_exts(sample)
     else:
         sys.exit("{} must end in .bam or .bam.gz".format(sample))
@@ -78,8 +78,8 @@ $ peako ~/workdir/peako-workflow/ \
 If you found peaKO useful, please cite:
 
 Denisko D, Viner C, Hoffman MM. Motif elucidation in ChIP-seq datasets with a
-knockout control. BioRxiv <ID> [Preprint]. 2019. \
-Available from: https://doi.org/<ID>
+knockout control. BioRxiv 10.1101/721720 [Preprint]. 2019. \
+Available from: https://doi.org/10.1101/721720
         """)
 
     parser.add_argument('workdir', metavar="outdir",
@@ -99,29 +99,29 @@ Available from: https://doi.org/<ID>
                         help='motif database (MEME)')
 
     # general
-    parser.add_argument('-V', '--version', action='version',
+    parser.add_argument('-v', '--version', action='version',
                         version=__version__)
 
     # peaKO submodule
-    parser.add_argument('-j', dest='jaspar_id',
+    parser.add_argument('-j', '--jaspar-id', dest='jaspar_id',
                         help='transcription factor motif JASPAR ' +
                         'identifier (e.g. MA0083.3)')
-    parser.add_argument('-m', dest='motif',
+    parser.add_argument('-m', '--motif', dest='motif',
                         help='transcription factor motif common name ' +
                         '(e.g. SRF)')
     parser.add_argument('--extra', action="store_true",
                         help='output all intermediate peaKO files for ' +
                         'plotting')
     parser.add_argument('--pickle', action="store_true",
-                        help='use pickled peaKO dictionaries from previous ' +
-                        'run')
+                        help='use pickled peaKO dictionaries from a ' +
+                        'previous run, with <outdir> set as before')
 
     # snakemake
     parser.add_argument('--sm-build-envs', action="store_true",
                         help='build conda environments for workflow and ' +
                         'exit (requires internet connection)')
     parser.add_argument('--sm-cluster-config', dest='sm_cluster_config',
-                        help='snakemake cluster configuration file (JSON)')
+                        help='Snakemake Slurm cluster configuration file (JSON)')
     # parser.add_argument('--sm-config', dest='sm_config',
     #                     help='snakemake configuration file (JSON)')
 
