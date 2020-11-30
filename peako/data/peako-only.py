@@ -76,12 +76,15 @@ def store_data_from_html(filename_html):
 
 def read_centrimo_df(filename_txt):
     """
-    Read CentriMo TXT file and return dataframe.
+    Read CentriMo TSV file and return dataframe.
     """
-    line = linecache.getline(filename_txt, 2)  # line 1: warning
-    header = line.split()[1:]  # split on whitespace and ignore leading '#'
-    df = pd.read_csv(filename_txt, header=None, names=header,
-                     skip_blank_lines=True, comment='#', delim_whitespace=True)
+    # line = linecache.getline(filename_txt, 2)  # line 1: warning
+    # header = line.split()[1:]  # split on whitespace and ignore leading '#'
+    # XXX adjusted for CentriMo 5.0.2+
+    line = linecache.getline(filename_txt, 1)
+    header = line.split()
+    df = pd.read_csv(filename_txt, header=None, names=header, skiprows=1,
+                     skip_blank_lines=True, comment='#', delim_whitespace=True) # XXX skiprows
     return df
 
 
@@ -131,7 +134,7 @@ def filter_centrimo_df(df, CentriMoOutput_):
     log_adj_p_val_filter = log(0.1/CentriMoOutput_.num_db_motifs())
     filtered_motif_list = (df
                            .loc[df['log_adj_p-value'] <=
-                                log_adj_p_val_filter]['id'])
+                                log_adj_p_val_filter]['motif_id'])  # XXX id-->motif_id
     return filtered_motif_list
 
 
@@ -643,14 +646,14 @@ Available from: https://doi.org/<ID>
                                              transcription_factor, jaspar_id))
             # find DMC rank
             fe_df = read_and_sort_fisher_exact_centrimo_df(dmc_txt)
-            dmc_rank = fe_df.index[fe_df["id"] == jaspar_id].tolist()[0]
+            dmc_rank = fe_df.index[fe_df["motif_id"] == jaspar_id].tolist()[0]  # XXX id-->motif_id
             # find KOIN rank
             koin_rank = sorted_koin_df.index[
-                sorted_koin_df["id"] == jaspar_id].tolist()[0]
+                sorted_koin_df["motif_id"] == jaspar_id].tolist()[0]  # XXX id-->motif_id
             # find WT rank (from DMC sorted by E-value instead of
             # Fisher's E-value)
             wt_rank = sorted_dmc_df.index[
-                sorted_dmc_df["id"] == jaspar_id].tolist()[0]
+                sorted_dmc_df["motif_id"] == jaspar_id].tolist()[0]  # XXX id-->motif_id
             # find number of peako motifs
             num_peako_motifs = len(rankings_ratio_sorted_df)
             # find number of peaks WT

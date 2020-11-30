@@ -7,6 +7,7 @@ add_script = resource_filename("peako", "data/add-pooled-de-novo-motifs-centrimo
 run_memechip_script = resource_filename("peako", "data/run_MEME-ChIP.sh")
 
 py273_env = resource_filename("peako", "data/py273-environment.yml")
+meme510_env = resource_filename("peako", "data/meme511-env.yml")  # XXX new
 macs2_env = resource_filename("peako", "data/macs2-environment.yml")
 centrimo_env = resource_filename("peako", "data/centrimo-neg-environment.yml")
 
@@ -96,8 +97,9 @@ rule run_meme_chip_pipeline_a:
         "meme-chip_out/PipelineA/centrimo_out/centrimo.html",
         "meme-chip_out/PipelineA/centrimo_out/centrimo.tsv",
         "meme-chip_out/PipelineA/dreme_out/dreme.xml"
-    conda:
-        py273_env
+    # conda:
+        # meme510_env
+        # py273_env
     shell:
         "meme-chip -dna -neg {input.ko} -meme-minw {params.min_meme_motif_width} -meme-maxw {params.max_meme_motif_width} -oc {params.outdir} -db {params.motif_database} {input.wt}"
 
@@ -114,8 +116,9 @@ rule run_meme_chip_pipeline_b:
         "meme-chip_out/PipelineB/centrimo_out/centrimo.html",
         "meme-chip_out/PipelineB/centrimo_out/centrimo.tsv",
         "meme-chip_out/PipelineB/dreme_out/dreme.xml"
-    conda:
-        py273_env
+    # conda:
+        # meme510_env
+        # py273_env
     shell:
         "meme-chip -dna -meme-minw {params.min_meme_motif_width} -meme-maxw {params.max_meme_motif_width} -oc {params.outdir} -db {params.motif_database} {input.pipb}"
 
@@ -132,8 +135,9 @@ rule run_meme_chip_wt:
         "meme-chip_out/WT/centrimo_out/centrimo.html",
         "meme-chip_out/WT/centrimo_out/centrimo.tsv",
         "meme-chip_out/WT/dreme_out/dreme.xml"
-    conda:
-        py273_env
+    # conda:
+        # meme510_env
+        # py273_env
     shell:
         "meme-chip -dna -meme-minw {params.min_meme_motif_width} -meme-maxw {params.max_meme_motif_width} -oc {params.outdir} -db {params.motif_database} {input.wt}"
 
@@ -182,8 +186,10 @@ rule run_centrimo_neg:
         "centrimo-neg_out/centrimo-0/centrimo.tsv",
         "centrimo-neg_out/centrimo-1/centrimo.html",
         "centrimo-neg_out/centrimo-1/centrimo.tsv"
-    conda:
-        centrimo_env
+    # conda:
+        # meme510_env
+        #py273_env
+        #centrimo_env
     shell:
         "bash commands-pooled-de-novo.sh"
 

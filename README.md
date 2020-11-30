@@ -10,7 +10,10 @@ PeaKO discovers motifs in ChIP-seq datasets with knockout controls. PeaKO takes 
 ### Dependencies
 
 1. Conda (Miniconda or Anaconda)
-2. MEME Suite version 4.12.0 with our CentriMo binary* (see below)
+2. MEME Suite version 5.1.0 or MEME Suite version 4.12.0 with our CentriMo binary* (see below)
+
+Please note that Conda can be installed locally without system administrator priviledges. We suggest following [Miniconda's installation instructions](https://docs.conda.io/en/latest/miniconda.html).
+PeaKO has only been tested on Linux systems.
 
 ### Installation
 
@@ -22,8 +25,10 @@ PeaKO discovers motifs in ChIP-seq datasets with knockout controls. PeaKO takes 
 
 ### Instructions for our modified CentriMo binary
 
-*Our modified CentriMo application will be incorporated in MEME Suite's next major release.
-Until then, you may install MEME Suite from source and replace its binary with our own to use peaKO.
+If MEME Suite version 5.1.0 is installed on your system and accessible in your path, you do not need to install our CentriMo binary separately. 
+Important: MEME Suite 5.1.0 must be installed from source and should not be installed from Conda at this time due to documented implementation issues.
+Future versions of peaKO will support installation of MEME Suite through Conda once these issues are resolved.
+If you are using an older version of MEME Suite, please follow the steps below to replace the CentriMo binary with our own to use peaKO.
 
 1. Download MEME distribution 4.12.0 from the [MEME Suite Download page](http://meme-suite.org/doc/download.html).
 2. Follow the "Quick Install" steps on the [MEME Suite Installation page](http://meme-suite.org/doc/install.html?man_type=web) up until `make install`.
