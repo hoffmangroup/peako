@@ -26,12 +26,14 @@ PeaKO has only been tested on Linux systems.
 > **NOTES:** 
 > If you run into errors indicating missing bs4 or pyYAML packages, try running `pip3 install beautifulsoup4==4.8.2 pyyaml`.
 > If step 2 above fails to create a Conda environment, you may try:
->    conda create --name peako
->    conda activate peako  # or source activate peako
->    conda install python=3.7
->    conda install -c anaconda beautifulsoup4=4.7 pandas
->    conda install -c bioconda -c conda-forge -c anaconda snakemake-minimal flake8 pathlib2 ipython twine
->    conda install -c bioconda pybedtools
+>
+>    conda create --name peako  
+>    conda activate peako  # or source activate peako  
+>    conda install python=3.7  
+>    conda install -c anaconda beautifulsoup4=4.7 pandas  
+>    conda install -c bioconda -c conda-forge -c anaconda snakemake-minimal flake8 pathlib2 ipython twine  
+>    conda install -c bioconda pybedtools  
+>
 > Please note that we have only tested peaKO on Linux.
 
 ### Instructions for our modified CentriMo binary
