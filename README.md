@@ -12,7 +12,7 @@ PeaKO discovers motifs in ChIP-seq datasets with knockout controls. PeaKO takes 
 1. Conda (Miniconda or Anaconda)
 2. MEME Suite version 5.1.0 or MEME Suite version 4.12.0 with our CentriMo binary* (see below)
 
-Please note that Conda can be installed locally without system administrator priviledges. We suggest following [Miniconda's installation instructions](https://docs.conda.io/en/latest/miniconda.html).
+Please note that Conda can be installed locally without system administrator privileges. We suggest following [Miniconda's installation instructions](https://docs.conda.io/en/latest/miniconda.html).
 PeaKO has only been tested on Linux systems.
 
 ### Installation
@@ -22,6 +22,17 @@ PeaKO has only been tested on Linux systems.
 3. Run `conda activate peako` or `source activate peako` to activate this environment.
 4. Install peaKO from PyPI by running `python3 -m pip install peako`.
 5. You can test that this worked by running `peako --help`.
+
+> **NOTES:** 
+> If you run into errors indicating missing bs4 or pyYAML packages, try running `pip3 install beautifulsoup4==4.8.2 pyyaml`.
+> If step 2 above fails to create a Conda environment, you may try:
+>    conda create --name peako
+>    conda activate peako  # or source activate peako
+>    conda install python=3.7
+>    conda install -c anaconda beautifulsoup4=4.7 pandas
+>    conda install -c bioconda -c conda-forge -c anaconda snakemake-minimal flake8 pathlib2 ipython twine
+>    conda install -c bioconda pybedtools
+> Please note that we have only tested peaKO on Linux.
 
 ### Instructions for our modified CentriMo binary
 
@@ -50,7 +61,7 @@ After activating peaKO's Conda environment (`conda activate peako` or `source ac
 
 `peako <outdir> <wt-bam> <ko-bam> <organism> <chr-sizes> <trf-masked-genome> <motif-database> [options]`
 
-There are 7 required arguments. Please provide full paths for files and directories.
+There are 7 required arguments. Please provide absolute paths for files and directories.
 
 - `outdir`: output directory (please make sure this already exists); all output directories and files will be created here
 - `wt-bam`: wild-type sample BAM file
