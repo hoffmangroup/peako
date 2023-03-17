@@ -2,7 +2,7 @@
 
 ## What is peaKO?
 
-PeaKO discovers motifs in ChIP-seq datasets with knockout controls. PeaKO takes in paired wild-type/knockout BAM files in addition to several reference files, as input. It returns a file of ranked motifs (see [our paper](https://doi.org/10.1101/721720) for more details).
+PeaKO discovers motifs in ChIP-seq datasets with knockout controls. PeaKO takes in paired wild-type/knockout BAM files in addition to several reference files, as input. It returns a file of ranked motifs (see [our paper](https://doi.org/10.1093/bioadv/vbad031) for more details).
 
 
 ## Quick start
@@ -111,4 +111,6 @@ We have deposited the [current version of the code](https://doi.org/10.5281/zeno
 
 If you found peaKO useful, please cite:
 
-Denisko D, Viner C, Hoffman MM. Motif elucidation in ChIP-seq datasets with a knockout control. BioRxiv 10.1101/721720 [Preprint]. 2019. Available from: https://doi.org/10.1101/721720
+
+
+[Danielle Denisko *, Coby Viner *, Michael M Hoffman, Motif elucidation in ChIP-seq datasets with a knockout control, *Bioinformatics Advances* 2023, vbad031](https://doi.org/10.1093/bioadv/vbad031).
